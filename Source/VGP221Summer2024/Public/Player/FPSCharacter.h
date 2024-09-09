@@ -24,6 +24,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	//TSubclassOf<class AFPSProjectile> ProjectileClass;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,6 +60,9 @@ public:
 
 	UFUNCTION()
 	void Fire();
+
+	UFUNCTION()
+	void SetProjectileClass(TSubclassOf<class AFPSProjectile> NewProjectileClass);
 
 	float Health = 100;
 	const float MaxHealth = 100;

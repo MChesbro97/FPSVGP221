@@ -2,6 +2,7 @@
 
 
 #include "Player/FPSCharacter.h"
+//#include "FPSProjectile.h"
 
 // Sets default values
 AFPSCharacter::AFPSCharacter()
@@ -137,6 +138,15 @@ float AFPSCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	}
 
 	return FinalDamage;
+}
+
+void AFPSCharacter::SetProjectileClass(TSubclassOf<AFPSProjectile> NewProjectileClass)
+{
+	if (NewProjectileClass)
+	{
+		ProjectileClass = NewProjectileClass;
+		UE_LOG(LogTemp, Warning, TEXT("Projectile class has been set to: %s"), *NewProjectileClass->GetName());
+	}
 }
 
 
