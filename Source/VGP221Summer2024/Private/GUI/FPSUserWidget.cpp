@@ -6,7 +6,7 @@
 void UFPSUserWidget::NativeConstruct()
 {
 	SetHealthBar(1.0f);
-	SetScoreText(0);
+	IncreaseSeedsText(0);
 
 	if (ButtonWidgetPrefab) {
 		for (int i = 0; i < 4; i++) {
@@ -26,10 +26,18 @@ void UFPSUserWidget::SetHealthBar(float percentage)
 	HealthBar->SetPercent(percentage);
 }
 
-void UFPSUserWidget::SetScoreText(int amount)
+void UFPSUserWidget::IncreaseSeedsText(int amount)
 {
-	if (!ScoreText) return;
+	if (!SeedsText) return;
 
-	UIScore += amount;
-	ScoreText->SetText(FText::FromString("Score: " + FString::FromInt(UIScore)));
+	UISeeds += amount;
+	SeedsText->SetText(FText::FromString("Seeds: " + FString::FromInt(UISeeds)));
+}
+
+void UFPSUserWidget::DecreaseSeedsText(int amount)
+{
+	if (!SeedsText) return;
+
+	UISeeds = FMath::Max(0, UISeeds - amount);
+	SeedsText->SetText(FText::FromString("Seeds: " + FString::FromInt(UISeeds)));
 }

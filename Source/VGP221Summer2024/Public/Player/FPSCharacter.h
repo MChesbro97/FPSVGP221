@@ -68,4 +68,11 @@ public:
 	const float MaxHealth = 100;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int Seeds;
+
+	void IncreaseSeeds(int amount);
+	void DecreaseSeeds(int amount);
 };
+

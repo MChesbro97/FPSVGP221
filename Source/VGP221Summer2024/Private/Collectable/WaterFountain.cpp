@@ -30,13 +30,15 @@ AWaterFountain::AWaterFountain()
 		FountainMesh->SetMaterial(0, WaterMaterial.Object);
 	}
 
-	FountainCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("FountainCollision"));
-	FountainCollision->InitBoxExtent(FVector(6.0f, 6.0f, 6.0f));
-	FountainCollision->SetRelativeLocation(FVector(0, 0, 5));
-	FountainCollision->SetupAttachment(FountainMesh);
-	FountainCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	//FountainCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("FountainCollision"));
+	//FountainCollision->InitBoxExtent(FVector(6.0f, 6.0f, 6.0f));
+	//FountainCollision->SetRelativeLocation(FVector(0, 0, 5));
+	//FountainCollision->SetupAttachment(FountainMesh);
+	//FountainCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	
 	bIsCollectablePresent = false;
+
+	WaterCollectableClass = AWaterCollectable::StaticClass();
 }
 
 

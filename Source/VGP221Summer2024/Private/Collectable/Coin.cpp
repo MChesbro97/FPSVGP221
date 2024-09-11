@@ -46,7 +46,7 @@ void ACoin::DeathTimerComplete()
 {
 	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
 	if (HUD) {
-		HUD->gameWidgetContainer->SetScoreText(Points);
+		HUD->gameWidgetContainer->IncreaseSeedsText(Points);
 	}
 
 	Destroy();

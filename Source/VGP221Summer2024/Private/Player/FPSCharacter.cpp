@@ -2,7 +2,10 @@
 
 
 #include "Player/FPSCharacter.h"
-//#include "FPSProjectile.h"
+#include "Projectile/SeedProjectile.h"
+#include "Projectile/FPSProjectile.h"
+#include "HUD/FPSHUD.h"
+#include "GUI/FPSUserWidget.h" 
 
 // Sets default values
 AFPSCharacter::AFPSCharacter()
@@ -97,6 +100,25 @@ void AFPSCharacter::Fire()
 {
 	if (!ProjectileClass) return;
 
+	// Check if the current projectile is SeedProjectile
+	if (ProjectileClass == ASeedProjectile::StaticClass())
+	{
+		// Check if there are enough seeds
+		if (Seeds > 0)
+		{
+			// Decrease the seed count and update UI
+			DecreaseSeeds(1);
+			// If you have a UI widget handling this, you could call its method here
+			// e.g., MyFPSUserWidget->DecreaseSeedsText(1);
+		}
+		else
+		{
+			// If no seeds are left, switch back to the default FPSProjectile
+			ProjectileClass = AFPSProjectile::StaticClass();
+			UE_LOG(LogTemp, Warning, TEXT("Out of seeds, switching to default projectile."));
+		}
+	}
+
 	FVector CameraLocation;
 	FRotator CameraRotation;
 	GetActorEyesViewPoint(CameraLocation, CameraRotation);
@@ -120,6 +142,7 @@ void AFPSCharacter::Fire()
 
 	AFPSProjectile* Projectile = World->SpawnActor<AFPSProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 	if (!Projectile) return;
+
 
 	FVector LaunchDirection = MuzzleRotation.Vector();
 	Projectile->FireInDirection(LaunchDirection);
@@ -147,6 +170,34 @@ void AFPSCharacter::SetProjectileClass(TSubclassOf<AFPSProjectile> NewProjectile
 		ProjectileClass = NewProjectileClass;
 		UE_LOG(LogTemp, Warning, TEXT("Projectile class has been set to: %s"), *NewProjectileClass->GetName());
 	}
+}
+
+void AFPSCharacter::IncreaseSeeds(int Amount)
+{
+	Seeds += Amount;
+
+	// Update the UI with the new seed count
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->IncreaseSeedsText(Amount);  // Update the UI with the new seed count
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Seeds increased by %d, total seeds: %d"), Amount, Seeds);
+}
+
+void AFPSCharacter::DecreaseSeeds(int Amount)
+{
+	Seeds = FMath::Max(0, Seeds - Amount);  // Ensure seeds don't go below 0
+
+	// Update the UI with the new seed count
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->DecreaseSeedsText(Amount);  // Update the UI with the new seed count
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Seeds decreased by %d, total seeds: %d"), Amount, Seeds);
 }
 
 
