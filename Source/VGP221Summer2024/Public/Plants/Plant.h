@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "Plant.generated.h"
 
 UCLASS()
@@ -20,8 +22,31 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	virtual void Tick(float DeltaTime) override;
 	// Plant's mesh component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* PlantMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* PlantCollider;
+
+	UFUNCTION()
+	void OnWatered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void CheckGrowth();
+	void DieAndDropSeeds();
+	//void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	bool bHasBeenWatered;
+
+	float TimeToGrowOrDie;
+	float GrowthCount;
+	float MaxGrowthCount;
+
+	FTimerHandle GrowthTimerHandle;
+
+	FVector GrowthScale;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ASeedCollectable> SeedCollectableClass;
 
 };

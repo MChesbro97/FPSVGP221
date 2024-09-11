@@ -19,7 +19,7 @@ ASeedCollectable::ASeedCollectable()
 	if (MeshAsset.Succeeded())
 	{
 		SeedCollectableMeshComponent->SetStaticMesh(MeshAsset.Object);
-		//SeedCollectableMeshComponent->SetRelativeScale3D(FVector(100.0f, 100.0f, 100.0f));
+		SeedCollectableMeshComponent->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	}
 
 	// Optionally, load any specific materials or set up additional components if needed
