@@ -21,4 +21,8 @@ public:
 protected:
 	// Override BeginPlay to initialize any seed-specific behavior
 	virtual void BeginPlay() override;
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class APlant> PlantClass;
 };

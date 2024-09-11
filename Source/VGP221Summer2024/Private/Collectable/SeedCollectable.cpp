@@ -19,7 +19,7 @@ ASeedCollectable::ASeedCollectable()
 	if (MeshAsset.Succeeded())
 	{
 		SeedCollectableMeshComponent->SetStaticMesh(MeshAsset.Object);
-		//SeedCollectableMeshComponent->SetRelativeScale3D(FVector(100.0f, 100.0f, 100.0f));
+		SeedCollectableMeshComponent->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	}
 
 	// Optionally, load any specific materials or set up additional components if needed
@@ -48,6 +48,13 @@ void ASeedCollectable::OnCollect()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to find the player or projectile class is null."));
 	}
+
+	if (Player)
+	{
+		Player->IncreaseSeeds(1);  // Increase the seed count by 1 and update UI
+		UE_LOG(LogTemp, Log, TEXT("Collected a seed!"));
+	}
+
 
 	// Destroy the collectable after collection
 	Destroy();

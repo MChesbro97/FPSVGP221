@@ -2,6 +2,7 @@
 
 
 #include "Collectable/Collectable.h"
+#include "Player/FPSCharacter.h"
 
 // Sets default values
 ACollectable::ACollectable()
@@ -33,7 +34,12 @@ void ACollectable::Tick(float DeltaTime)
 
 void ACollectable::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	OnCollect();
+	AFPSCharacter* Player = Cast<AFPSCharacter>(OtherActor);
+	if (Player)
+	{
+		// If it is the player, call OnCollect
+		OnCollect();
+	}
 }
 
 void ACollectable::OnCollect()

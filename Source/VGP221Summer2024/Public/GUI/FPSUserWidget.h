@@ -25,7 +25,7 @@ public:
 	UProgressBar* HealthBar;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ScoreText;
+	UTextBlock* SeedsText;
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* ButtonContainer;
@@ -37,8 +37,10 @@ public:
 	void SetHealthBar(float percentage);
 
 	UFUNCTION()
-	void SetScoreText(int amount);
+	void IncreaseSeedsText(int amount);
+	UFUNCTION()
+	void DecreaseSeedsText(int amount);
 
 private:
-	int UIScore = 0;
+	int UISeeds = 0;
 };

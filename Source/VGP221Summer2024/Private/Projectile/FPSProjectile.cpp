@@ -13,7 +13,7 @@ AFPSProjectile::AFPSProjectile()
 		CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 		CollisionComponent->InitSphereRadius(15.0f);
 		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
-		CollisionComponent->OnComponentHit.AddDynamic(this, &AFPSProjectile::OnWhateverYouWantToNameIt);
+		CollisionComponent->OnComponentHit.AddDynamic(this, &AFPSProjectile::OnHit);
 		RootComponent = CollisionComponent;
 	}
 
@@ -74,7 +74,7 @@ void AFPSProjectile::FireInDirection(const FVector& ShootDirection)
 	ProjectileMovementComponent->Velocity = ProjectileMovementComponent->InitialSpeed * ShootDirection;
 }
 
-void AFPSProjectile::OnWhateverYouWantToNameIt(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+void AFPSProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Collision with only physics objects
 	if (OtherActor != this && OtherComponent->IsSimulatingPhysics())

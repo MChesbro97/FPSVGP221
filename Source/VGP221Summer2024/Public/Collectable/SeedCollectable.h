@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Collectable/Collectable.h"
 #include "Kismet/GameplayStatics.h"
+#include "HUD/FPSHUD.h"
 #include "SeedCollectable.generated.h"
 
 /**
@@ -34,4 +35,7 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UMaterialInstanceDynamic* SeedCollectableMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Seeds = 1;
 };
