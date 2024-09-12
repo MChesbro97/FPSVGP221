@@ -74,6 +74,6 @@ public:
 
 	void IncreaseSeeds(int amount);
 	void DecreaseSeeds(int amount);
-	void CheckGameOver();
+	int GetPlayerSeedCount() const;
 };
 

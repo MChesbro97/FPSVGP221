@@ -3,6 +3,8 @@
 
 #include "Plants/Plant.h"
 #include "Collectable/SeedCollectable.h"
+#include "VGP221Summer2024/FPSGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "TimerManager.h"
 #include "Projectile/WaterProjectile.h"
@@ -45,6 +47,12 @@ void APlant::BeginPlay()
 	Super::BeginPlay();
 	
 	GetWorldTimerManager().SetTimer(GrowthTimerHandle, this, &APlant::CheckGrowth, TimeToGrowOrDie, false);
+
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->AddPlant();  // Call AddPlant when the plant is spawned
+	}
 
 }
 
@@ -95,6 +103,11 @@ void APlant::CheckGrowth()
 	}
 	else
 	{
+		AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+		if (GameMode)
+		{
+			GameMode->RemovePlant();  // Call RemovePlant when the plant is destroyed
+		}
 		// If not watered, the plant dies
 		Destroy();
 	}
@@ -136,6 +149,11 @@ void APlant::DieAndDropSeeds()
 				UE_LOG(LogTemp, Warning, TEXT("Seed collectable spawned at %s!"), *SeedSpawnLocation.ToString());
 			}
 		}
+	}
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->RemovePlant();  // Call RemovePlant when the plant is destroyed
 	}
 
 	// Finally, destroy the plant

@@ -9,6 +9,8 @@ void UGameOverWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetIsFocusable(true);
+
 	SetGameOverText("Game Over, no seeds left!");
 	SetButtonText("Play Again", "Quit To Main Menu");
 

@@ -3,6 +3,7 @@
 
 #include "Collectable/SeedCollectable.h"
 #include "Player/FPSCharacter.h"
+#include "VGP221Summer2024/FPSGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Projectile/FPSProjectile.h"
@@ -27,6 +28,12 @@ ASeedCollectable::ASeedCollectable()
 void ASeedCollectable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->AddSeedCollectable(); 
+	}
 }
 
 void ASeedCollectable::OnCollect()
@@ -55,6 +62,11 @@ void ASeedCollectable::OnCollect()
 		UE_LOG(LogTemp, Log, TEXT("Collected a seed!"));
 	}
 
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->RemoveSeedCollectable();
+	}
 
 	// Destroy the collectable after collection
 	Destroy();

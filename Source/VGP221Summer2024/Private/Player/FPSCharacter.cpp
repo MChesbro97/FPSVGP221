@@ -200,4 +200,9 @@ void AFPSCharacter::DecreaseSeeds(int Amount)
 	UE_LOG(LogTemp, Log, TEXT("Seeds decreased by %d, total seeds: %d"), Amount, Seeds);
 }
 
+int AFPSCharacter::GetPlayerSeedCount() const
+{
+	return Seeds;
+}
+
 
