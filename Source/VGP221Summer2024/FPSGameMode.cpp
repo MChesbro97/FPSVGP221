@@ -16,9 +16,14 @@ void AFPSGameMode::StartPlay()
     // Debugging in the console
     UE_LOG(LogTemp, Warning, TEXT("Hello World, this is FPSGameMode!"));
 
-    int test = 10;
-    bool boolTest = true;
-    //UE_LOG(LogTemp, Warning, TEXT("Test: %i, TestBool: %d, StringText: %s"), test, boolTest, TEXT("Test"));
+	// Get the player controller
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
-    //UE_LOGFMT(LogTemp, Warning, "Test: {test}, boolTest: {boolTest}", test, boolTest);
+	// Switch the input mode to Game Only, so the player can interact with the game world
+	if (PlayerController)
+	{
+		FInputModeGameOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+		PlayerController->bShowMouseCursor = false;  // Hide the cursor while playing
+	}
 }
