@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GUI/GameOverWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "TimerManager.h"
 
 void AFPSGameMode::StartPlay()
 {
@@ -23,12 +24,11 @@ void AFPSGameMode::StartPlay()
 	// Get the player controller
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
-	// Switch the input mode to Game Only, so the player can interact with the game world
 	if (PlayerController)
 	{
 		FInputModeGameOnly InputMode;
 		PlayerController->SetInputMode(InputMode);
-		PlayerController->bShowMouseCursor = false;  // Hide the cursor while playing
+		PlayerController->bShowMouseCursor = false;
 	}
 
     NumberOfPlants = 0;
@@ -63,7 +63,8 @@ void AFPSGameMode::RemoveSeedCollectable()
     {
         NumberOfSeedCollectables--;
         UE_LOG(LogTemp, Warning, TEXT("SeedCollectable removed. Total SeedCollectables in level: %d"), NumberOfSeedCollectables);
-        CheckGameOver();
+
+        CheckGameOverWithDelay();
     }
 }
 
@@ -71,17 +72,34 @@ void AFPSGameMode::CheckGameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("Checking for game over"));
     AFPSCharacter* PlayerCharacter = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-    if (!PlayerCharacter) return;  // Ensure the player character exists
+    if (!PlayerCharacter) return; 
 
-    if (PlayerCharacter->GetPlayerSeedCount() <= 0 && NumberOfPlants <= 0 && NumberOfSeedCollectables <= 0)
+    bool bHasActiveSeedProjectiles = ActiveSeedProjectiles.Num() > 0;
+
+    if (PlayerCharacter->GetPlayerSeedCount() >= 5)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Player won!"));
+        GameOver(true); 
+        return;
+    }
+
+    if (PlayerCharacter->GetPlayerSeedCount() <= 0 && NumberOfPlants <= 0 && NumberOfSeedCollectables <= 0 && !bHasActiveSeedProjectiles)
     {
         UE_LOG(LogTemp, Warning, TEXT("Should be game over"));
-        GameOver();
+        GameOver(false);
+        return;
     }
 
 }
 
-void AFPSGameMode::GameOver()
+void AFPSGameMode::CheckGameOverWithDelay()
+{
+    FTimerHandle GameOverTimerHandle;
+
+    GetWorld()->GetTimerManager().SetTimer(GameOverTimerHandle, this, &AFPSGameMode::CheckGameOver, 1.0f, false);
+}
+
+void AFPSGameMode::GameOver(bool bPlayerWon)
 {
     UE_LOG(LogTemp, Warning, TEXT("Game over function running"));
     // If we have a valid GameOverWidgetClass, create the widget
@@ -95,6 +113,16 @@ void AFPSGameMode::GameOver()
 
             GameOverWidgetInstance->SetIsFocusable(true);
 
+            // Set the GameOver text depending on whether the player won or lost
+            if (bPlayerWon)
+            {
+                GameOverWidgetInstance->SetGameOverText("You Win!");
+            }
+            else
+            {
+                GameOverWidgetInstance->SetGameOverText("Game Over, no seeds left!");
+            }
+
             // Set input mode to UI only and show the mouse cursor
             APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
             if (PlayerController)
@@ -107,5 +135,21 @@ void AFPSGameMode::GameOver()
                 UE_LOG(LogTemp, Warning, TEXT("Is widget focusable: %s"), GameOverWidgetInstance->IsFocusable() ? TEXT("Yes") : TEXT("No"));
             }
         }
+    }
+}
+
+void AFPSGameMode::RegisterSeedProjectile(ASeedProjectile* Projectile)
+{
+    if (Projectile)
+    {
+        ActiveSeedProjectiles.Add(Projectile);
+    }
+}
+
+void AFPSGameMode::UnregisterSeedProjectile(ASeedProjectile* Projectile)
+{
+    if (Projectile)
+    {
+        ActiveSeedProjectiles.Remove(Projectile);
     }
 }

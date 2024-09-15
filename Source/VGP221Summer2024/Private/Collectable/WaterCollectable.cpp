@@ -38,7 +38,6 @@ void AWaterCollectable::OnCollect()
 
 	if (Player)
 	{
-		// Directly set the projectile class to the native C++ WaterProjectile class
 		Player->SetProjectileClass(AWaterProjectile::StaticClass());
 		UE_LOG(LogTemp, Warning, TEXT("Projectile changed to WaterProjectile!"));
 	}

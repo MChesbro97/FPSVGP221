@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Logging/StructuredLog.h"
+#include "Projectile/SeedProjectile.h"
 #include "FPSGameMode.generated.h"
 
 /**
@@ -18,12 +19,21 @@ class VGP221SUMMER2024_API AFPSGameMode : public AGameModeBase
 public:
 	virtual void StartPlay() override;
 
-	void GameOver();
+	void GameOver(bool bPlayerWon);
 
 	void AddPlant();
 	void RemovePlant();
 	void AddSeedCollectable();
 	void RemoveSeedCollectable();
+
+	UFUNCTION()
+	void CheckGameOverWithDelay();
+
+	void RegisterSeedProjectile(ASeedProjectile* Projectile);
+
+	void UnregisterSeedProjectile(ASeedProjectile* Projectile);
+
+	TArray<ASeedProjectile*> ActiveSeedProjectiles;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
@@ -38,4 +48,5 @@ protected:
 
 	// Check for game over conditions
 	void CheckGameOver();
+
 };

@@ -30,6 +30,8 @@ public:
 	// Override the OnCollect method
 	virtual void OnCollect() override;
 
+	virtual void Destroyed() override;
+
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* SeedCollectableMeshComponent;
 

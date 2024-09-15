@@ -18,6 +18,8 @@ public:
 	// Sets default values for this actor's properties
 	ASeedProjectile();
 
+	virtual void Destroyed() override;
+
 protected:
 	// Override BeginPlay to initialize any seed-specific behavior
 	virtual void BeginPlay() override;

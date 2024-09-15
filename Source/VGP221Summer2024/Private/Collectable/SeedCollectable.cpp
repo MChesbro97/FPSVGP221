@@ -71,3 +71,15 @@ void ASeedCollectable::OnCollect()
 	// Destroy the collectable after collection
 	Destroy();
 }
+void ASeedCollectable::Destroyed()
+{
+	Super::Destroyed();
+
+	// Notify the GameMode that the seed has been destroyed
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->RemoveSeedCollectable();
+		UE_LOG(LogTemp, Log, TEXT("Seed was destroyed and removed from the GameMode."));
+	}
+}

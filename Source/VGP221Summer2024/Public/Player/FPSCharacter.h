@@ -44,7 +44,9 @@ public:
 	FVector MuzzleOffset;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	TSubclassOf<class AFPSProjectile> ProjectileClass;
+	TSubclassOf<class AFPSProjectile> DefaultProjectileClass;
+	TSubclassOf<class AFPSProjectile> WaterProjectileClass;
+	TSubclassOf<class AFPSProjectile> SeedProjectileClass;
 
 	UFUNCTION()
 	void MoveForward(float value);
@@ -63,6 +65,15 @@ public:
 
 	UFUNCTION()
 	void SetProjectileClass(TSubclassOf<class AFPSProjectile> NewProjectileClass);
+
+	UFUNCTION()
+	void SetWaterProjectile();
+
+	UFUNCTION()
+	void SetSeedProjectile();
+
+	UFUNCTION()
+	void SetDefaultProjectile();
 
 	float Health = 100;
 	const float MaxHealth = 100;
