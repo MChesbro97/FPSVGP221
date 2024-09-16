@@ -39,7 +39,8 @@ void AWaterCollectable::OnCollect()
 	if (Player)
 	{
 		Player->SetProjectileClass(AWaterProjectile::StaticClass());
-		UE_LOG(LogTemp, Warning, TEXT("Projectile changed to WaterProjectile!"));
+		Player->IncreaseWater(10);
+		UE_LOG(LogTemp, Warning, TEXT("Projectile changed to WaterProjectile and water increased!"));
 	}
 	else
 	{

@@ -115,10 +115,20 @@ void AFPSCharacter::Fire()
 		}
 		else
 		{
-			return;
 			UE_LOG(LogTemp, Warning, TEXT("Out of seeds"));
-			//DefaultProjectileClass = AFPSProjectile::StaticClass();
-			//UE_LOG(LogTemp, Warning, TEXT("Out of seeds, switching to default projectile."));
+			return;
+		}
+	}
+	else if (DefaultProjectileClass == AWaterProjectile::StaticClass())
+	{
+		if (Water > 0)
+		{
+			DecreaseWater(1); 
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Out of water"));
+			return;
 		}
 	}
 
@@ -223,6 +233,37 @@ void AFPSCharacter::DecreaseSeeds(int Amount)
 int AFPSCharacter::GetPlayerSeedCount() const
 {
 	return Seeds;
+}
+
+void AFPSCharacter::IncreaseWater(int Amount)
+{
+	Water = FMath::Min(Water + Amount, 10);
+
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->IncreaseWaterText(Amount);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Water increased by %d, total water: %d"), Amount, Water);
+}
+
+void AFPSCharacter::DecreaseWater(int Amount)
+{
+	Water = FMath::Max(0, Water - Amount);
+
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->DecreaseWaterText(Amount);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Water decreased by %d, total water: %d"), Amount, Water);
+}
+
+int AFPSCharacter::GetPlayerWaterCount() const
+{
+	return Water;
 }
 
 

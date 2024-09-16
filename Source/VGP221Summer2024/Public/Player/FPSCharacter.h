@@ -86,5 +86,12 @@ public:
 	void IncreaseSeeds(int amount);
 	void DecreaseSeeds(int amount);
 	int GetPlayerSeedCount() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int Water; 
+
+	void IncreaseWater(int Amount);
+	void DecreaseWater(int Amount);
+	int GetPlayerWaterCount() const;
 };
 
