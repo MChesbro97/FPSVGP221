@@ -44,7 +44,9 @@ public:
 	FVector MuzzleOffset;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	TSubclassOf<class AFPSProjectile> ProjectileClass;
+	TSubclassOf<class AFPSProjectile> DefaultProjectileClass;
+	TSubclassOf<class AFPSProjectile> WaterProjectileClass;
+	TSubclassOf<class AFPSProjectile> SeedProjectileClass;
 
 	UFUNCTION()
 	void MoveForward(float value);
@@ -64,6 +66,15 @@ public:
 	UFUNCTION()
 	void SetProjectileClass(TSubclassOf<class AFPSProjectile> NewProjectileClass);
 
+	UFUNCTION()
+	void SetWaterProjectile();
+
+	UFUNCTION()
+	void SetSeedProjectile();
+
+	UFUNCTION()
+	void SetDefaultProjectile();
+
 	float Health = 100;
 	const float MaxHealth = 100;
 
@@ -75,5 +86,12 @@ public:
 	void IncreaseSeeds(int amount);
 	void DecreaseSeeds(int amount);
 	int GetPlayerSeedCount() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int Water; 
+
+	void IncreaseWater(int Amount);
+	void DecreaseWater(int Amount);
+	int GetPlayerWaterCount() const;
 };
 

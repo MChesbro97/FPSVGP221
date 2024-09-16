@@ -28,6 +28,12 @@ public:
 	UTextBlock* SeedsText;
 
 	UPROPERTY(meta = (BindWidget))
+	UProgressBar* WaterBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* WaterText;
+
+	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* ButtonContainer;
 
 	UPROPERTY(EditAnywhere)
@@ -40,7 +46,13 @@ public:
 	void IncreaseSeedsText(int amount);
 	UFUNCTION()
 	void DecreaseSeedsText(int amount);
+	UFUNCTION()
+	void IncreaseWaterText(int amount);
+	UFUNCTION()
+	void DecreaseWaterText(int amount);
 
 private:
 	int UISeeds = 0;
+
+	int UIWater = 0;
 };

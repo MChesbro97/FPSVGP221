@@ -3,7 +3,9 @@
 
 #include "Player/FPSCharacter.h"
 #include "Projectile/SeedProjectile.h"
+#include "Projectile/WaterProjectile.h"
 #include "Projectile/FPSProjectile.h"
+#include "VGP221Summer2024/FPSGameMode.h"
 #include "HUD/FPSHUD.h"
 #include "GUI/FPSUserWidget.h" 
 
@@ -66,6 +68,11 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	// Fire
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
+
+	// Switch projectile types
+	PlayerInputComponent->BindAction("SetWaterProjectile", IE_Pressed, this, &AFPSCharacter::SetWaterProjectile);
+	PlayerInputComponent->BindAction("SetSeedProjectile", IE_Pressed, this, &AFPSCharacter::SetSeedProjectile);
+	PlayerInputComponent->BindAction("SetDefaultProjectile", IE_Pressed, this, &AFPSCharacter::SetDefaultProjectile);
 }
 
 void AFPSCharacter::MoveForward(float value)
@@ -98,24 +105,30 @@ void AFPSCharacter::EndJump()
 
 void AFPSCharacter::Fire()
 {
-	if (!ProjectileClass) return;
+	if (!DefaultProjectileClass) return;
 
-	// Check if the current projectile is SeedProjectile
-	if (ProjectileClass == ASeedProjectile::StaticClass())
+	if (DefaultProjectileClass == ASeedProjectile::StaticClass())
 	{
-		// Check if there are enough seeds
 		if (Seeds > 0)
 		{
-			// Decrease the seed count and update UI
 			DecreaseSeeds(1);
-			// If you have a UI widget handling this, you could call its method here
-			// e.g., MyFPSUserWidget->DecreaseSeedsText(1);
 		}
 		else
 		{
-			// If no seeds are left, switch back to the default FPSProjectile
-			ProjectileClass = AFPSProjectile::StaticClass();
-			UE_LOG(LogTemp, Warning, TEXT("Out of seeds, switching to default projectile."));
+			UE_LOG(LogTemp, Warning, TEXT("Out of seeds"));
+			return;
+		}
+	}
+	else if (DefaultProjectileClass == AWaterProjectile::StaticClass())
+	{
+		if (Water > 0)
+		{
+			DecreaseWater(1); 
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Out of water"));
+			return;
 		}
 	}
 
@@ -140,7 +153,7 @@ void AFPSCharacter::Fire()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 
-	AFPSProjectile* Projectile = World->SpawnActor<AFPSProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+	AFPSProjectile* Projectile = World->SpawnActor<AFPSProjectile>(DefaultProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 	if (!Projectile) return;
 
 
@@ -167,20 +180,38 @@ void AFPSCharacter::SetProjectileClass(TSubclassOf<AFPSProjectile> NewProjectile
 {
 	if (NewProjectileClass)
 	{
-		ProjectileClass = NewProjectileClass;
+		DefaultProjectileClass = NewProjectileClass;
 		UE_LOG(LogTemp, Warning, TEXT("Projectile class has been set to: %s"), *NewProjectileClass->GetName());
 	}
 }
+
+void AFPSCharacter::SetWaterProjectile()
+{
+	SetProjectileClass(AWaterProjectile::StaticClass());
+	UE_LOG(LogTemp, Warning, TEXT("Projectile set to Water"));
+}
+
+void AFPSCharacter::SetSeedProjectile()
+{
+	SetProjectileClass(ASeedProjectile::StaticClass());
+	UE_LOG(LogTemp, Warning, TEXT("Projectile set to Seeds"));
+}
+
+void AFPSCharacter::SetDefaultProjectile()
+{
+	SetProjectileClass(AFPSProjectile::StaticClass());
+	UE_LOG(LogTemp, Warning, TEXT("Projectile set to Default"));
+}
+
 
 void AFPSCharacter::IncreaseSeeds(int Amount)
 {
 	Seeds += Amount;
 
-	// Update the UI with the new seed count
 	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
 	if (HUD && HUD->gameWidgetContainer)
 	{
-		HUD->gameWidgetContainer->IncreaseSeedsText(Amount);  // Update the UI with the new seed count
+		HUD->gameWidgetContainer->IncreaseSeedsText(Amount);
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("Seeds increased by %d, total seeds: %d"), Amount, Seeds);
@@ -188,13 +219,12 @@ void AFPSCharacter::IncreaseSeeds(int Amount)
 
 void AFPSCharacter::DecreaseSeeds(int Amount)
 {
-	Seeds = FMath::Max(0, Seeds - Amount);  // Ensure seeds don't go below 0
+	Seeds = FMath::Max(0, Seeds - Amount); 
 
-	// Update the UI with the new seed count
 	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
 	if (HUD && HUD->gameWidgetContainer)
 	{
-		HUD->gameWidgetContainer->DecreaseSeedsText(Amount);  // Update the UI with the new seed count
+		HUD->gameWidgetContainer->DecreaseSeedsText(Amount);  
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("Seeds decreased by %d, total seeds: %d"), Amount, Seeds);
@@ -203,6 +233,37 @@ void AFPSCharacter::DecreaseSeeds(int Amount)
 int AFPSCharacter::GetPlayerSeedCount() const
 {
 	return Seeds;
+}
+
+void AFPSCharacter::IncreaseWater(int Amount)
+{
+	Water = FMath::Min(Water + Amount, 10);
+
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->IncreaseWaterText(Amount);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Water increased by %d, total water: %d"), Amount, Water);
+}
+
+void AFPSCharacter::DecreaseWater(int Amount)
+{
+	Water = FMath::Max(0, Water - Amount);
+
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (HUD && HUD->gameWidgetContainer)
+	{
+		HUD->gameWidgetContainer->DecreaseWaterText(Amount);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Water decreased by %d, total water: %d"), Amount, Water);
+}
+
+int AFPSCharacter::GetPlayerWaterCount() const
+{
+	return Water;
 }
 
 

@@ -5,6 +5,8 @@
 #include "Plants/Plant.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "VGP221Summer2024/FPSGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/PrimitiveComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -67,5 +69,23 @@ void ASeedProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// You can add any seed-specific behavior here if needed
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode)
+	{
+		GameMode->RegisterSeedProjectile(this);
+	}
+}
+
+void ASeedProjectile::Destroyed()
+{
+	Super::Destroyed();
+
+	// Notify the GameMode that the seed has been destroyed
+	AFPSGameMode* GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GameMode)
+	{
+		GameMode->UnregisterSeedProjectile(this);
+		GameMode->CheckGameOverWithDelay();
+		UE_LOG(LogTemp, Log, TEXT("Seed was destroyed and removed from the GameMode."));
+	}
 }
